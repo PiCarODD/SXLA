@@ -12,4 +12,4 @@ sqli+xss+lfi+admin-finder all in one script
      <li>python sxla.py -a target_website</li>
        </ul>
        <br>
-<a href="https://asciinema.org/a/ierLmavK3dDc6PUbcP40vrC6B" target="_blank"><img src="https://asciinema.org/a/ierLmavK3dDc6PUbcP40vrC6B.svg" /></a>
+<a href="https://asciinema.org/a/238453" target="_blank"><img src="https://asciinema.org/a/238453.svg" /></a>
