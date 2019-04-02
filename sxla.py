@@ -1,50 +1,57 @@
 import optparse
 import requests
-import socket
 import sys
-import urllib
-print ("""
-
-
-  ██████ ▒██   ██▒ ██▓    ▄▄▄      
-▒██    ▒ ▒▒ █ █ ▒░▓██▒   ▒████▄    
-░ ▓██▄   ░░  █   ░▒██░   ▒██  ▀█▄  
-  ▒   ██▒ ░ █ █ ▒ ▒██░   ░██▄▄▄▄██ 
-▒██████▒▒▒██▒ ▒██▒░██████▒▓█   ▓██▒
-▒ ▒▓▒ ▒ ░▒▒ ░ ░▓ ░░ ▒░▓  ░▒▒   ▓▒█░
-░ ░▒  ░ ░░░   ░▒ ░░ ░ ▒  ░ ▒   ▒▒ ░
-░  ░  ░   ░    ░    ░ ░    ░   ▒   
-      ░   ░    ░      ░  ░     ░  ░
-                                   
-
-\n
-[+][+][+]Developed by Unknown Tinkers[+][+][+]\n
-[+][+][+]Released Date 5/30/2018[+][+][+] \n""")
-parser=optparse.OptionParser("usage "+"-s <SQLI> or -x <XSS> or -l <LFI>")
-print("example:sxlscanner.py -s")
-parser.add_option('-s',dest='sname',type='string',help='specify attack type')
-parser.add_option('-x',dest='xname',type='string',help='specify attack type')
-parser.add_option('-l',dest='lname',type='string',help='specify attack type')
+import time
+def slowprint(s):
+	for c in s :
+      	   sys.stdout.write(c)
+      	   sys.stdout.flush()
+           time.sleep(5. / 100)
+slowprint("[/]SXLA Scanner v1.0[/]\nDeveloped by Unknown Tinkers\n\n")
+parser=optparse.OptionParser("usage "+"-s <SQLI> or -x <XSS> or -l <LFI> or -a <Admin Finder>\n")
+print("example:sxlscanner.py -s <Target Website>\n")
+parser.add_option('-s',dest='sqli',type='string',help='specify attack type')
+parser.add_option('-x',dest='xss',type='string',help='specify attack type')
+parser.add_option('-l',dest='lfi',type='string',help='specify attack type')
+parser.add_option('-a',dest='admin',type='string',help='specify attack type')
 (options,arg)=parser.parse_args()
-if(options.sname==None)&(options.xname==None)&(options.lname==None):
+if(options.sqli==None)&(options.xss==None)&(options.lfi==None)&(options.admin==None):
 	print (parser.usage)
 	exit(0)
-if(options.sname!= None):
-	target=input("Enter URL to attack with SQLI(eg http://www.google.com):")
+if options.sqli!=None:
+	target=options.sqli
 	response=requests.get(target+"'").text
-	if 'error' in response and 'syntax' in response or 'MySQL' in response:
-		print ("Its vulnerable to SQLInjection")
+	if 'error' in response and 'syntax' in response or 'MySQL' in response or "QUERY" in response:
+		slowprint("Target is vulnerable to SQLInjection\n")
 	else:
-		print ("Its not vulnerable")
-if(options.xname!=None):
-	target=input("Enter url to test XSS:")
-	with open("xss.txt","r") as f:
-		for line in f:
-			param=line.strip('\n')
-			host=target+param
-			print ("Checking website "+target+param+'\n')
-if(options.lname!=None):
-	target=input("Enter LFI url:")
-
-
+		slowprint("Its not vulnerable")
+if options.lfi!=None:
+	target=options.lfi
+	with open('lfi.txt','r') as f:
+		f=f.readlines()
+		for i in range(len(f)):
+			payload=f[i].strip('\n')
+			response=requests.get(target+payload).text
+			print target+payload
+			if '/bin/bash' in response or 'www-data:/var/www' in response:
+				slowprint("Its vulnerable to LFI : "+target+payload+'\n')
+				break
+if options.admin!=None:
+	target=options.admin
+	with open('admins.txt','r') as f:
+		f=f.readlines()
+		for i in range(len(f)):
+			payload=f[i].strip('\n')
+			response=requests.get(target+'/'+payload)
+			if response.status_code==200:
+				slowprint("[+]Found admin panel : "+target+'/'+payload+'\n')
+if options.xss!=None:
+	target=options.xss
+	with open('xss.txt','r') as f:
+		f=f.readlines()
+		for i in range(len(f)):
+			payload=f[i].strip('\n')
+			response=requests.get(target+payload).text
+			if payload in response:
+				slowprint("[+]Vulnerable to XSS : "+target+payload+'\n')
 
