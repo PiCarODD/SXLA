@@ -1,6 +1,6 @@
 # SXLA
 sqli+xss+lfi+admin-finder all in one script
-# Useage
+# Usage
 <ul>
   For SQLI
   <li>python sxla.py -s terget_website></li>
